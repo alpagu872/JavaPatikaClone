@@ -2,11 +2,9 @@ package PatikaDev;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 
-public class Example extends JFrame {
+public class LoginScreen extends JFrame {
     private JPanel wrapper;
     private JPanel wrapperTop;
     private JPanel wrapperBottom;
@@ -18,7 +16,7 @@ public class Example extends JFrame {
     private JLabel passLabel;
     private JButton btnLogin;
 
-    public Example() {
+    public LoginScreen() {
         for (UIManager.LookAndFeelInfo feelInfo : UIManager.getInstalledLookAndFeels()){
 
             System.out.println(feelInfo.getName() + " ==> " + feelInfo.getClassName());
@@ -26,20 +24,14 @@ public class Example extends JFrame {
             if ("Nimbus".equals(feelInfo.getName())){
                 try {
                     UIManager.setLookAndFeel(feelInfo.getClassName());
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                } catch (InstantiationException e) {
-                    throw new RuntimeException(e);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                } catch (UnsupportedLookAndFeelException e) {
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
                     throw new RuntimeException(e);
                 }
             }
         }
         setContentPane(wrapper);
         setSize(400, 300);
-        setTitle("Örnek Uygulama");
+        setTitle("Alpagu.DEV");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
 

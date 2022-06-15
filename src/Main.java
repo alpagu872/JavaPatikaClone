@@ -1,7 +1,9 @@
-import PatikaDev.Example;
+import PatikaDev.LoginScreen;
+import View.OperatorGUI;
 
 public class Main {
     public static void main(String[] args) {
-        Example ex = new Example();
+//        LoginScreen ex = new LoginScreen();
+        //OperatorGUI operatorGUI = new OperatorGUI();
     }
 }
