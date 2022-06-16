@@ -2,6 +2,7 @@ package Model;
 
 import Helper.DBHelper;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -87,6 +88,26 @@ public class User {
         }
 
         return userList;
+
+    }
+
+    public static boolean add(String name, String username, String pass, String type) {
+
+        String query = "INSERT INTO user (name,username,pass,type) VALUES (?,?,?,?)";
+        boolean key = true;
+
+        try {
+            PreparedStatement preparedStatement = DBHelper.getInstance().prepareStatement(query);
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, username);
+            preparedStatement.setString(3, pass);
+            preparedStatement.setString(4, type);
+            key = preparedStatement.executeUpdate() != -1;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return key;
 
     }
 }

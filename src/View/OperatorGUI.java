@@ -8,6 +8,8 @@ import Model.User;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class OperatorGUI extends JFrame {
     private JPanel wrapper;
@@ -18,13 +20,22 @@ public class OperatorGUI extends JFrame {
     private JPanel lblTabUsers;
     private JScrollPane scrollUserList;
     private JTable tableUserList;
+    private JPanel panelUserForm;
+    private JTextField textFieldName;
+    private JTextField textFieldUserName;
+    private JPasswordField passwordFieldUser;
+    private JComboBox cmbUserType;
+    private JButton btnUserAdd;
+    private JLabel lblUser;
+    private JLabel lblPass;
+    private JLabel lblUserType;
+    private JLabel lblName;
     private final Operator operator;
     private DefaultTableModel modelUserList;
     private Object[] rowUserList;
 
     public OperatorGUI(Operator operator) {
         this.operator = operator;
-
 
         add(wrapper);
         setSize(1000, 500);
@@ -58,13 +69,21 @@ public class OperatorGUI extends JFrame {
         tableUserList.setModel(modelUserList);
         tableUserList.getTableHeader().setReorderingAllowed(false);
 
+        btnUserAdd.addActionListener(e -> {
+            if (Helper.isFieldEmpty(textFieldName) || Helper.isFieldEmpty(textFieldUserName) || Helper.isFieldEmpty(passwordFieldUser)){
+                Helper.showMessage("fill");
+            }else {
+                Helper.showMessage("done");
+            }
+
+
+        });
     }
 
     public static void main(String[] args) {
         Helper.setLayout();
         Operator op = new Operator();
-
-
+        op.setName("Alpagu");
         OperatorGUI operatorGUI = new OperatorGUI(op);
     }
 

@@ -15,4 +15,36 @@ public class Helper {
             }
         }
     }
+
+    public static boolean isFieldEmpty(JTextField textField){
+        return textField.getText().trim().isEmpty();
+
+    }
+
+    public static void showMessage(String str){
+        optionPaneLangTr();
+        String message;
+        String title;
+
+        switch (str){
+            case "fill":
+                message = "Lütfen tüm alanları doldurunuz!";
+                title = "Hata!";
+                break;
+            case "done":
+                message = "Ekleme Başarılı";
+                title = "Başarılı İşlem";
+                break;
+            default:
+                message = str;
+                title = "Mesaj";
+        }
+        JOptionPane.showMessageDialog(null,message, title,JOptionPane.INFORMATION_MESSAGE);
+    }
+
+
+    public static void optionPaneLangTr(){
+        UIManager.put("OptionPane.okButtonText" , "Tamam");
+
+    }
 }
