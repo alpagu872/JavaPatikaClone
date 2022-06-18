@@ -144,7 +144,32 @@ public class User {
 
     }
 
+    public static boolean update(int id, String name, String username, String pass, String type) {
+
+        User findUser = User.getFetch(username);
+        if (findUser != null && findUser.getId() != id) {
+            Helper.showMessage("duplicate");
+            return false;
+        }
+        String query = "UPDATE user SET name = ?, userName = ?, pass = ?, type = ? WHERE id = ?";
+        try {
+            PreparedStatement pr = DBHelper.getInstance().prepareStatement(query);
+            pr.setString(1, name);
+            pr.setString(2, username);
+            pr.setString(3, pass);
+            pr.setString(4, type);
+            pr.setInt(5, id);
+            return pr.executeUpdate() != -1;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+
+        }
+        return true;
+
+    }
+
     public static User getFetch(String username) {
+
 
         User obj = null;
         String query = "SELECT * FROM user WHERE userName = ?";
@@ -166,5 +191,47 @@ public class User {
 
 
         return obj;
+    }
+
+
+    public static ArrayList<User> searchUserList(String query) {
+        ArrayList<User> userList = new ArrayList<>();
+
+        User obj;
+
+        try {
+            Statement st = DBHelper.getInstance().createStatement();
+            ResultSet rs = st.executeQuery(query);
+            while (rs.next()) {
+                obj = new User();
+                obj.setId(rs.getInt("id"));
+                obj.setName(rs.getString("name"));
+                obj.setUsername(rs.getString("userName"));
+                obj.setPass(rs.getString("pass"));
+                obj.setType(rs.getString("type"));
+                userList.add(obj);
+            }
+            st.close();
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return userList;
+    }
+
+    public static String searchQuery(String name, String username, String type) {
+        String query = "SELECT * FROM user WHERE userName LIKE '%{{username}}%' AND name LIKE '%{{name}}%'";
+        query = query.replace("{{username}}", username);
+        query = query.replace("{{name}}", name);
+        if (!type.isEmpty()) {
+
+            query += "AND type='{{type}}'";
+            query = query.replace("{{type}}", type);
+
+        }
+        query = query.replace("{{type}}", type);
+
+        return query;
     }
 }

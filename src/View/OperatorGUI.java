@@ -3,15 +3,19 @@ package View;
 import Helper.Config;
 import Helper.Helper;
 import Helper.ScreenHelper;
+import Model.Course;
 import Model.Operator;
 import Model.User;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class OperatorGUI extends JFrame {
     private JPanel wrapper;
@@ -35,9 +39,27 @@ public class OperatorGUI extends JFrame {
     private JTextField textFieldUserIdDel;
     private JButton btnUserDel;
     private JLabel kullanıcıIDLabel;
+    private JTextField textFieldShName;
+    private JLabel lblShName;
+    private JTextField textFieldShUsername;
+    private JComboBox comboBoxShUserType;
+    private JLabel lblNameSh;
+    private JLabel lblUserTypeSh;
+    private JButton btnShUser;
+    private JScrollPane scrollCourse;
+    private JTable tableCourse;
+    private JPanel pnlCourseAdd;
+    private JTextField textFieldCourseName;
+    private JButton btnAddCourse;
     private final Operator operator;
     private DefaultTableModel modelUserList;
     private Object[] rowUserList;
+
+    private DefaultTableModel modelCourseList;
+    private Object[] rowCourseList;
+
+    private JPopupMenu courseMenu;
+
 
     public OperatorGUI(Operator operator) {
         this.operator = operator;
@@ -68,7 +90,14 @@ public class OperatorGUI extends JFrame {
 
         loadUserModel();
 
+        //Menu
+        courseMenu = new JPopupMenu();
+        JMenuItem updateMenu = new JMenuItem("Güncelle");
+        JMenuItem deleteMenu = new JMenuItem("Sil");
+        courseMenu.add(updateMenu);
+        courseMenu.add(deleteMenu);
 
+        //USER LIST
         tableUserList.setModel(modelUserList);
         tableUserList.getTableHeader().setReorderingAllowed(false);
 
@@ -81,9 +110,45 @@ public class OperatorGUI extends JFrame {
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
-
         });
 
+        tableUserList.getModel().addTableModelListener(e -> {
+
+            if (e.getType() == TableModelEvent.UPDATE) {
+                int userId = Integer.parseInt(String.valueOf(tableUserList.getValueAt(tableUserList.getSelectedRow(), 0)));
+                String name = tableUserList.getValueAt(tableUserList.getSelectedRow(), 1).toString();
+                String username = tableUserList.getValueAt(tableUserList.getSelectedRow(), 2).toString();
+                String pass = tableUserList.getValueAt(tableUserList.getSelectedRow(), 3).toString();
+                String type = tableUserList.getValueAt(tableUserList.getSelectedRow(), 4).toString();
+
+                if (User.update(userId, name, username, pass, type)) {
+                    Helper.showMessage("done");
+                }
+                loadUserModel();
+
+            }
+        });
+
+
+        modelCourseList = new DefaultTableModel();
+        Object[] columnCourseList = {"ID", "Kurs Adı"};
+        tableCourse.getTableHeader().setReorderingAllowed(false);
+        modelCourseList.setColumnIdentifiers(columnCourseList);
+        rowCourseList = new Object[columnCourseList.length];
+        loadCourseModel();
+
+        tableCourse.setModel(modelCourseList);
+        tableCourse.setComponentPopupMenu(courseMenu);
+        tableCourse.getColumnModel().getColumn(0).setMaxWidth(100);
+
+        tableCourse.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                Point point = e.getPoint();
+                int selectedRow = tableCourse.rowAtPoint(point);
+                tableCourse.setRowSelectionInterval(selectedRow,selectedRow);
+            }
+        });
 
         btnUserAdd.addActionListener(e -> {
             if (Helper.isFieldEmpty(textFieldName) || Helper.isFieldEmpty(textFieldUserName) || Helper.isFieldEmpty(passwordFieldUser)) {
@@ -121,6 +186,48 @@ public class OperatorGUI extends JFrame {
                 }
             }
         });
+        btnShUser.addActionListener(e -> {
+
+            String name = textFieldShName.getText();
+            String username = textFieldShUsername.getText();
+            String type = comboBoxShUserType.getSelectedItem().toString();
+            String query = User.searchQuery(name, username, type);
+
+            ArrayList<User> searchingUsers = User.searchUserList(query);
+            loadUserModel(searchingUsers);
+
+
+        });
+        btnAddCourse.addActionListener(e -> {
+
+            if (Helper.isFieldEmpty(textFieldCourseName)) {
+                Helper.showMessage("fill");
+            } else {
+                if (Course.add(textFieldCourseName.getText())) {
+                    Helper.showMessage("done");
+                    loadCourseModel();
+                    textFieldCourseName.setText(null);
+                } else {
+                    Helper.showMessage("error");
+                }
+            }
+
+        });
+    }
+
+    private void loadCourseModel() {
+        DefaultTableModel clearModel = (DefaultTableModel) tableCourse.getModel();
+        clearModel.setRowCount(0);
+
+        int i = 0;
+        for (Course obj : Course.getList()) {
+            i = 0;
+            rowCourseList[i++] = obj.getId();
+            rowCourseList[i++] = obj.getName();
+            modelCourseList.addRow(rowCourseList);
+        }
+
+
     }
 
     public static void main(String[] args) {
@@ -138,6 +245,22 @@ public class OperatorGUI extends JFrame {
         clearModel.setRowCount(0);
 
         for (User obj : User.getList()) {
+            int i = 0;
+            rowUserList[i++] = obj.getId();
+            rowUserList[i++] = obj.getName();
+            rowUserList[i++] = obj.getUsername();
+            rowUserList[i++] = obj.getPass();
+            rowUserList[i++] = obj.getType();
+            modelUserList.addRow(rowUserList);
+        }
+    }
+
+    public void loadUserModel(ArrayList<User> arrayList) {
+
+        DefaultTableModel clearModel = (DefaultTableModel) tableUserList.getModel();
+        clearModel.setRowCount(0);
+
+        for (User obj : arrayList) {
             int i = 0;
             rowUserList[i++] = obj.getId();
             rowUserList[i++] = obj.getName();
