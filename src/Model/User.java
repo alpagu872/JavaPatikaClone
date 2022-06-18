@@ -1,6 +1,7 @@
 package Model;
 
 import Helper.DBHelper;
+import Helper.Helper;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -83,6 +84,8 @@ public class User {
                 obj.setType(rs.getString("type"));
                 userList.add(obj);
             }
+            st.close();
+            rs.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -96,18 +99,72 @@ public class User {
         String query = "INSERT INTO user (name,username,pass,type) VALUES (?,?,?,?)";
         boolean key = true;
 
+        User findUser = User.getFetch(username);
+        if (findUser != null) {
+            Helper.showMessage("duplicate");
+            return false;
+        }
         try {
-            PreparedStatement preparedStatement = DBHelper.getInstance().prepareStatement(query);
-            preparedStatement.setString(1, name);
-            preparedStatement.setString(2, username);
-            preparedStatement.setString(3, pass);
-            preparedStatement.setString(4, type);
-            key = preparedStatement.executeUpdate() != -1;
+            PreparedStatement pr = DBHelper.getInstance().prepareStatement(query);
+            pr.setString(1, name);
+            pr.setString(2, username);
+            pr.setString(3, pass);
+            pr.setString(4, type);
 
+            int response = pr.executeUpdate();
+
+
+            if (response == -1) {
+                Helper.showMessage("error");
+            }
+
+            return response != -1;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+
+        }
+
+
+        return true;
+
+    }
+
+    public static boolean delete(int id) {
+        String query = "DELETE FROM user WHERE id = ?";
+        try {
+            PreparedStatement pr = DBHelper.getInstance().prepareStatement(query);
+            pr.setInt(1, id);
+
+            return pr.executeUpdate() != -1;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return true;
+
+    }
+
+    public static User getFetch(String username) {
+
+        User obj = null;
+        String query = "SELECT * FROM user WHERE userName = ?";
+        try {
+            PreparedStatement pr = DBHelper.getInstance().prepareStatement(query);
+            pr.setString(1, username);
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()) {
+                obj = new User();
+                obj.setId(rs.getInt("id"));
+                obj.setName(rs.getString("name"));
+                obj.setUsername(rs.getString("userName"));
+                obj.setPass(rs.getString("pass"));
+                obj.setType(rs.getString("type"));
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return key;
 
+
+        return obj;
     }
 }

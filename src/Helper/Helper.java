@@ -32,8 +32,16 @@ public class Helper {
                 title = "Hata!";
                 break;
             case "done":
-                message = "Ekleme Başarılı";
+                message = "İşlem Başarılı";
                 title = "Başarılı İşlem";
+                break;
+            case "error":
+                message = "Ekleme Başarısız";
+                title = "Hata";
+                break;
+            case "duplicate":
+                message = "Aynı kullanıcı adı daha önce kullanılmış.";
+                title = "Uyarı";
                 break;
             default:
                 message = str;
