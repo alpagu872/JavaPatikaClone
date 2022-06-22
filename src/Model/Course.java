@@ -62,4 +62,51 @@ public class Course {
         }
         return true;
     }
+
+    public static boolean update(int id, String name) {
+        String query = "UPDATE patika SET name = ? WHERE id = ?";
+        try {
+            PreparedStatement pr = DBHelper.getInstance().prepareStatement(query);
+            pr.setString(1, name);
+            pr.setInt(2, id);
+            return pr.executeUpdate() != -1;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return true;
+    }
+
+    public static Course getFetch(int id) {
+        Course obj = null;
+        String query = "SELECT * FROM patika WHERE id = ?";
+
+        try {
+            PreparedStatement pr = DBHelper.getInstance().prepareStatement(query);
+            pr.setInt(1, id);
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()) {
+                obj = new Course(rs.getInt("id"), rs.getString("name"));
+
+            }
+            pr.close();
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return obj;
+
+    }
+
+    public static boolean delete(int id) {
+        String query = "DELETE FROM patika WHERE id = ?";
+        try {
+            PreparedStatement pr = DBHelper.getInstance().prepareStatement(query);
+            pr.setInt(1, id);
+            return pr.executeUpdate() != -1;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return true;
+    }
 }

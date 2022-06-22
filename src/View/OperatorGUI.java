@@ -11,10 +11,7 @@ import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 public class OperatorGUI extends JFrame {
@@ -97,6 +94,33 @@ public class OperatorGUI extends JFrame {
         courseMenu.add(updateMenu);
         courseMenu.add(deleteMenu);
 
+        updateMenu.addActionListener(e -> {
+            int selectId = Integer.parseInt(tableCourse.getValueAt(tableCourse.getSelectedRow(), 0).toString());
+            UpdateCourseGUI updateCourseGUI = new UpdateCourseGUI(Course.getFetch(selectId));
+            updateCourseGUI.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    loadCourseModel();
+                }
+            });
+
+
+        });
+
+        deleteMenu.addActionListener(e -> {
+            if (Helper.confirm("sure")) {
+                int selectId = Integer.parseInt(tableCourse.getValueAt(tableCourse.getSelectedRow(), 0).toString());
+                if (Course.delete(selectId)) {
+                    Helper.showMessage("done");
+                    loadCourseModel();
+                } else {
+                    Helper.showMessage("error;");
+                }
+            }
+
+        });
+
+
         //USER LIST
         tableUserList.setModel(modelUserList);
         tableUserList.getTableHeader().setReorderingAllowed(false);
@@ -146,7 +170,7 @@ public class OperatorGUI extends JFrame {
             public void mousePressed(MouseEvent e) {
                 Point point = e.getPoint();
                 int selectedRow = tableCourse.rowAtPoint(point);
-                tableCourse.setRowSelectionInterval(selectedRow,selectedRow);
+                tableCourse.setRowSelectionInterval(selectedRow, selectedRow);
             }
         });
 
@@ -177,12 +201,14 @@ public class OperatorGUI extends JFrame {
             if (Helper.isFieldEmpty(textFieldUserIdDel)) {
                 Helper.showMessage("fill");
             } else {
-                int fieldUserId = Integer.parseInt(textFieldUserIdDel.getText());
-                if (User.delete(fieldUserId)) {
-                    Helper.showMessage("done");
-                    loadUserModel();
-                } else {
-                    Helper.showMessage("error");
+                if (Helper.confirm("sure")) {
+                    int fieldUserId = Integer.parseInt(textFieldUserIdDel.getText());
+                    if (User.delete(fieldUserId)) {
+                        Helper.showMessage("done");
+                        loadUserModel();
+                    } else {
+                        Helper.showMessage("error");
+                    }
                 }
             }
         });
