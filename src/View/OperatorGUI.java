@@ -48,6 +48,10 @@ public class OperatorGUI extends JFrame {
     private JPanel pnlCourseAdd;
     private JTextField textFieldCourseName;
     private JButton btnAddCourse;
+    private JPanel pnlSubject;
+    private JPanel pnlCourses;
+    private JScrollPane scrllSubjectList;
+    private JTable tableSubjectList;
     private final Operator operator;
     private DefaultTableModel modelUserList;
     private Object[] rowUserList;
