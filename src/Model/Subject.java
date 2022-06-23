@@ -1,5 +1,12 @@
 package Model;
 
+import Helper.DBHelper;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
 public class Subject {
     private int id;
     private int userId;
@@ -8,7 +15,7 @@ public class Subject {
     private String lang;
 
     private Course course;
-    private User user;
+    private User educator;
 
     public Subject(int id, int userId, int courseId, String name, String lang) {
         this.id = id;
@@ -17,10 +24,36 @@ public class Subject {
         this.name = name;
         this.lang = lang;
         this.course = Course.getFetch(courseId);
-        this.user = User.getFetch(userId);
+        this.educator = User.getFetch(userId);
     }
 
     public Subject() {
+    }
+
+    public static ArrayList<Subject> getList() {
+        ArrayList<Subject> subjectArrayList = new ArrayList<>();
+
+        Subject obj;
+
+        try {
+            Statement st = DBHelper.getInstance().createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM subject ");
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                int userId = rs.getInt("userId");
+                int courseId = rs.getInt("courseId");
+                String name = rs.getString("name");
+                String lang = rs.getString("lang");
+                obj = new Subject(id, userId, courseId, name, lang);
+                subjectArrayList.add(obj);
+            }
+
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return subjectArrayList;
+
     }
 
     public int getId() {

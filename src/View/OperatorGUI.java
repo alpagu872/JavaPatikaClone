@@ -5,6 +5,7 @@ import Helper.Helper;
 import Helper.ScreenHelper;
 import Model.Course;
 import Model.Operator;
+import Model.Subject;
 import Model.User;
 
 import javax.swing.*;
@@ -52,6 +53,15 @@ public class OperatorGUI extends JFrame {
     private JPanel pnlCourses;
     private JScrollPane scrllSubjectList;
     private JTable tableSubjectList;
+    private JPanel pnlAddSubject;
+    private JTextField textFieldSubjectName;
+    private JLabel lblSubjectName;
+    private JLabel lblProgLang;
+    private JTextField textFieldSubjectLang;
+    private JLabel lblCourse;
+    private JComboBox cmbCourse;
+    private JComboBox cmbEducatorSelect;
+    private JButton btnSubjectAdd;
     private final Operator operator;
     private DefaultTableModel modelUserList;
     private Object[] rowUserList;
@@ -60,6 +70,9 @@ public class OperatorGUI extends JFrame {
     private Object[] rowCourseList;
 
     private JPopupMenu courseMenu;
+
+    private DefaultTableModel modelSubjectList;
+    private Object[] rowSubjectList;
 
 
     public OperatorGUI(Operator operator) {
@@ -178,6 +191,25 @@ public class OperatorGUI extends JFrame {
             }
         });
 
+
+        //Course List
+
+
+        //Subject List
+
+        modelSubjectList = new DefaultTableModel();
+        Object[] colSubjectList = {"ID", "DERS ADI", "PROGRAMLAMA DİLİ", "KURS", "EĞİTMEN"};
+        modelSubjectList.setColumnIdentifiers(colSubjectList);
+        rowSubjectList = new Object[colSubjectList.length];
+
+        loadSubjectList();
+
+        tableSubjectList.setModel(modelSubjectList);
+        tableSubjectList.getColumnModel().getColumn(0).setMaxWidth(75);
+        tableSubjectList.getTableHeader().setReorderingAllowed(false);
+
+
+
         btnUserAdd.addActionListener(e -> {
             if (Helper.isFieldEmpty(textFieldName) || Helper.isFieldEmpty(textFieldUserName) || Helper.isFieldEmpty(passwordFieldUser)) {
                 Helper.showMessage("fill");
@@ -243,6 +275,28 @@ public class OperatorGUI extends JFrame {
             }
 
         });
+
+        btnLogout.addActionListener(e -> {
+            if (Helper.confirm("Çıkmak istiyor musunuz?")) {
+                setVisible(false);
+                dispose();
+            }
+        });
+    }
+
+    private void loadSubjectList() {
+        DefaultTableModel clearModel = (DefaultTableModel) tableSubjectList.getModel();
+        clearModel.setRowCount(0);
+
+        int i = 0 ;
+        for (Subject obj : Subject.getList()){
+            i = 0 ;
+            rowSubjectList[i++] = obj.getId();
+            rowSubjectList[i++] = obj.getName();
+            rowSubjectList[i++] = obj.getLang();
+            rowSubjectList[i++] = obj.getClass().getName();
+
+        }
     }
 
     private void loadCourseModel() {
