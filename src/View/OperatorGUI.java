@@ -3,9 +3,9 @@ package View;
 import Helper.Config;
 import Helper.Helper;
 import Helper.ScreenHelper;
-import Model.Course;
+import Model.Patika;
 import Model.Operator;
-import Model.Subject;
+import Model.Course;
 import Model.User;
 
 import javax.swing.*;
@@ -113,7 +113,7 @@ public class OperatorGUI extends JFrame {
 
         updateMenu.addActionListener(e -> {
             int selectId = Integer.parseInt(tableCourse.getValueAt(tableCourse.getSelectedRow(), 0).toString());
-            UpdateCourseGUI updateCourseGUI = new UpdateCourseGUI(Course.getFetch(selectId));
+            UpdateCourseGUI updateCourseGUI = new UpdateCourseGUI(Patika.getFetch(selectId));
             updateCourseGUI.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
@@ -127,7 +127,7 @@ public class OperatorGUI extends JFrame {
         deleteMenu.addActionListener(e -> {
             if (Helper.confirm("sure")) {
                 int selectId = Integer.parseInt(tableCourse.getValueAt(tableCourse.getSelectedRow(), 0).toString());
-                if (Course.delete(selectId)) {
+                if (Patika.delete(selectId)) {
                     Helper.showMessage("done");
                     loadCourseModel();
                 } else {
@@ -265,7 +265,7 @@ public class OperatorGUI extends JFrame {
             if (Helper.isFieldEmpty(textFieldCourseName)) {
                 Helper.showMessage("fill");
             } else {
-                if (Course.add(textFieldCourseName.getText())) {
+                if (Patika.add(textFieldCourseName.getText())) {
                     Helper.showMessage("done");
                     loadCourseModel();
                     textFieldCourseName.setText(null);
@@ -289,12 +289,14 @@ public class OperatorGUI extends JFrame {
         clearModel.setRowCount(0);
 
         int i = 0 ;
-        for (Subject obj : Subject.getList()){
+        for (Course obj : Course.getList()){
             i = 0 ;
             rowSubjectList[i++] = obj.getId();
             rowSubjectList[i++] = obj.getName();
             rowSubjectList[i++] = obj.getLang();
-            rowSubjectList[i++] = obj.getClass().getName();
+            rowSubjectList[i++] = obj.getCourse().getName();
+            rowSubjectList[i++] = obj.getEducator().getName();
+            modelSubjectList.addRow(rowSubjectList);
 
         }
     }
@@ -304,7 +306,7 @@ public class OperatorGUI extends JFrame {
         clearModel.setRowCount(0);
 
         int i = 0;
-        for (Course obj : Course.getList()) {
+        for (Patika obj : Patika.getList()) {
             i = 0;
             rowCourseList[i++] = obj.getId();
             rowCourseList[i++] = obj.getName();

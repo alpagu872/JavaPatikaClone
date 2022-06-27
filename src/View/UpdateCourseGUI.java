@@ -3,21 +3,19 @@ package View;
 import Helper.Config;
 import Helper.Helper;
 import Helper.ScreenHelper;
-import Model.Course;
+import Model.Patika;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class UpdateCourseGUI extends JFrame {
     private JPanel wrapper;
     private JTextField textFieldCourseName;
     private JLabel lblCourseName;
     private JButton btnUpdateCourse;
-    private Course course;
+    private Patika patika;
 
-    public UpdateCourseGUI(Course course) {
-        this.course = course;
+    public UpdateCourseGUI(Patika patika) {
+        this.patika = patika;
         add(wrapper);
         setSize(300, 150);
         setLocation(ScreenHelper.ScreenCoord("x", getSize()), ScreenHelper.ScreenCoord("y", getSize()));
@@ -25,14 +23,14 @@ public class UpdateCourseGUI extends JFrame {
         setTitle(Config.PROJECT_TITLE);
         setVisible(true);
 
-        textFieldCourseName.setText(course.getName());
+        textFieldCourseName.setText(patika.getName());
 
         btnUpdateCourse.addActionListener(e -> {
 
             if (Helper.isFieldEmpty(textFieldCourseName)) {
                 Helper.showMessage("fill");
             } else {
-                if (Course.update(course.getId(), textFieldCourseName.getText())) {
+                if (Patika.update(patika.getId(), textFieldCourseName.getText())) {
                     Helper.showMessage("done");
 
                 }
