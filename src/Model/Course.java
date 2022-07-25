@@ -2,6 +2,7 @@ package Model;
 
 import Helper.DBHelper;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -9,51 +10,11 @@ import java.util.ArrayList;
 
 public class Course {
     private int id;
-    private int userId;
-    private int courseId;
     private String name;
-    private String lang;
 
-    private Patika patika;
-    private User educator;
-
-    public Course(int id, int userId, int courseId, String name, String lang) {
+    public Course(int id, String name) {
         this.id = id;
-        this.userId = userId;
-        this.courseId = courseId;
         this.name = name;
-        this.lang = lang;
-        this.patika = Patika.getFetch(courseId);
-        this.educator = User.getFetch(userId);
-    }
-
-    public Course() {
-    }
-
-    public static ArrayList<Course> getList() {
-        ArrayList<Course> courseArrayList = new ArrayList<>();
-
-        Course obj;
-
-        try {
-            Statement st = DBHelper.getInstance().createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM subject ");
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                int userId = rs.getInt("userId");
-                int courseId = rs.getInt("courseId");
-                String name = rs.getString("name");
-                String lang = rs.getString("lang");
-                obj = new Course(id, userId, courseId, name, lang);
-                courseArrayList.add(obj);
-            }
-
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return courseArrayList;
-
     }
 
     public int getId() {
@@ -64,22 +25,6 @@ public class Course {
         this.id = id;
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public int getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
-    }
-
     public String getName() {
         return name;
     }
@@ -88,27 +33,80 @@ public class Course {
         this.name = name;
     }
 
-    public String getLang() {
-        return lang;
+    public static ArrayList<Course> getList() {
+        ArrayList<Course> courseList = new ArrayList<>();
+        Course obj;
+        try {
+            Statement st = DBHelper.getInstance().createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM patika");
+            while (rs.next()) {
+                obj = new Course(rs.getInt("id"), rs.getString("name"));
+                courseList.add(obj);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return courseList;
     }
 
-    public void setLang(String lang) {
-        this.lang = lang;
+
+    public static boolean add(String name) {
+        String query = "INSERT INTO patika (name) VALUES (?)";
+        try {
+            PreparedStatement pr = DBHelper.getInstance().prepareStatement(query);
+            pr.setString(1, name);
+            return pr.executeUpdate() != -1;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return true;
     }
 
-    public Patika getCourse() {
-        return patika;
+    public static boolean update(int id, String name) {
+        String query = "UPDATE patika SET name = ? WHERE id = ?";
+        try {
+            PreparedStatement pr = DBHelper.getInstance().prepareStatement(query);
+            pr.setString(1, name);
+            pr.setInt(2, id);
+            return pr.executeUpdate() != -1;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return true;
     }
 
-    public void setCourse(Patika patika) {
-        this.patika = patika;
+    public static Course getFetch(int id) {
+        Course obj = null;
+        String query = "SELECT * FROM patika WHERE id = ?";
+
+        try {
+            PreparedStatement pr = DBHelper.getInstance().prepareStatement(query);
+            pr.setInt(1, id);
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()) {
+                obj = new Course(rs.getInt("id"), rs.getString("name"));
+
+            }
+            pr.close();
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return obj;
+
     }
 
-    public User getEducator() {
-        return educator;
-    }
-
-    public void setEducator(User educator) {
-        this.educator = educator;
+    public static boolean delete(int id) {
+        String query = "DELETE FROM patika WHERE id = ?";
+        try {
+            PreparedStatement pr = DBHelper.getInstance().prepareStatement(query);
+            pr.setInt(1, id);
+            return pr.executeUpdate() != -1;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return true;
     }
 }

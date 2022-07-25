@@ -1,11 +1,14 @@
 import Helper.Helper;
 import Helper.ScreenHelper;
+import Model.Operator;
 import View.LoginScreen;
+import View.OperatorGUI;
 
 public class Main {
     public static void main(String[] args) {
         Helper.setLayout();
-        LoginScreen ex = new LoginScreen();
-        //OperatorGUI operatorGUI = new OperatorGUI();
+        Operator op = new Operator();
+        op.setName("Alpagu");
+        OperatorGUI operatorGUI = new OperatorGUI(op);
     }
 }
